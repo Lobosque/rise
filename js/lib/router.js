@@ -85,8 +85,6 @@ var Router = {
     }
 };
 
-Router.register('/foo/bar/:id');
-
 // Listen on hash change:
 window.addEventListener('hashchange', Router.listener);  
 // Listen on page load:
