@@ -57,7 +57,7 @@ Controller.prototype.render = function render($element) {
       console.log(response);
       throw new Error('View file ' + self.viewUrl + ' wasn\'t found');
     } else {
-      throw new Error('Error ' + response.status ' while trying to load view');
+      throw new Error('Error ' + response.status + ' while trying to load view');
     }
   });
 };
