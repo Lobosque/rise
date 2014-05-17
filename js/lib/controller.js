@@ -61,3 +61,20 @@ Controller.prototype.render = function render($element) {
     }
   });
 };
+
+Controller.prototype.renderElement = function renderElement(path, data, cb) {
+  self = this;
+  path = '../views/elements/' + path + '.html';
+  $.get(path, function(response) {
+    var template = Handlebars.compile(response);
+    cb.call(this, template(data));
+  })
+  .fail(function(response) {
+    if(response.status == 404) {
+      console.log(response);
+      throw new Error('Element file ' + path + ' wasn\'t found');
+    } else {
+      throw new Error('Error ' + response.status + ' while trying to load view');
+    }
+  });
+};
