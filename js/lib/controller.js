@@ -15,7 +15,10 @@ var Controller = function Controller(name, actions) {
   controllers[name] = self;
   _.each(actions, function(action, actionName) {
     var params = getParamNames(action);
-    var url = '/' + self.name + '/' + actionName;
+    var url = '/' + self.name;
+    if(actionName != 'index') {
+      url += '/' + actionName;
+    }
     _.each(params, function (param) {
       url += '/:' + param;
     });
@@ -29,6 +32,8 @@ Controller.prototype.after = function after() {};
 Controller.prototype.invoke = function invoke(action, data) {
   this.data = data;
   this.before();
+  console.log(this.actions);
+  console.log(this.action);
   if(this.actions[action]) {
     this.actions[action].call(this);
   } else {

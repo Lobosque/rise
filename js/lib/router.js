@@ -12,9 +12,16 @@ var getUrlParams = function(router, url) {
   }
   var tokensUrl = url.split('/');
   var tokensPath = path.split('/');
+  var i = 2; //this is where the args start
   data.router.controller = tokensPath[0];
-  data.router.action = tokensPath[1];
-  for(var i = 2; i < tokensUrl.length; i++) {
+  //in cases like /users/:id, args start at 1 and action is 'index'
+  if(tokensPath[1] === undefined || tokensPath[1].charAt(0) == ':') {
+    i--;
+    data.router.action = 'index';
+  } else {
+    data.router.action = tokensPath[1];
+  }
+  for(i; i < tokensUrl.length; i++) {
     var argName = tokensPath[i].substr(1);
     data.controller[argName] = tokensUrl[i];
   }
@@ -60,6 +67,7 @@ var Router = {
        return true;
      }
     //TODO: call 404 controller
+    console.log('404: route doesn\'t exist');
     });
   },
   routeToRegExp: function(route) {
