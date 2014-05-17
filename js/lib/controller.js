@@ -30,10 +30,9 @@ Controller.prototype.before = function before() {};
 Controller.prototype.after = function after() {};
 
 Controller.prototype.invoke = function invoke(action, data) {
+  this.viewUrl = '../views/' + this.name + '/' + action + '.html';
   this.data = data;
   this.before();
-  console.log(this.actions);
-  console.log(this.action);
   if(this.actions[action]) {
     this.actions[action].call(this);
   } else {
@@ -43,5 +42,22 @@ Controller.prototype.invoke = function invoke(action, data) {
 
 Controller.prototype.done = function done() {
   this.after();
-  //TODO: render view
+  this.render();
+};
+
+Controller.prototype.render = function render($element) {
+  $element = $element || $('body');
+  self = this;
+  $.get(self.viewUrl, function(response) {
+    var template = Handlebars.compile(response);
+    $element.html(template(self.data));
+  })
+  .fail(function(response) {
+    if(response.status == 404) {
+      console.log(response);
+      throw new Error('View file ' + self.viewUrl + ' wasn\'t found');
+    } else {
+      throw new Error('Error ' + response.status ' while trying to load view');
+    }
+  });
 };
