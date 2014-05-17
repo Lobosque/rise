@@ -1,21 +1,66 @@
+var getUrlParams = function(router, url) {
+  var data = {
+    router: {},
+    controller: {}
+  };
+  var path = router.path;
+  if(url.charAt(0) == '/') {
+    url = url.substr(1);
+  }
+  if(path.charAt(0) == '/') {
+    path = path.substr(1);
+  }
+  var tokensUrl = url.split('/');
+  var tokensPath = path.split('/');
+  data.router.controller = tokensPath[0];
+  data.router.action = tokensPath[1];
+  console.log(tokensPath);
+  for(var i = 2; i < tokensUrl.length; i++) {
+    var argName = tokensPath[i].substr(1);
+    data.controller[argName] = tokensUrl[i];
+  }
+  return data;
+};
+
+var stripSlashes = function(str) {
+  if(str.charAt(0) == '/') {
+    str = str.substr(1);
+  }
+  if(str.charAt(str.length-1) == '/') {
+    str = str.substr(0, str.length-1);
+  }
+  return str;
+}
+
 var Router = {
-  routes: {},
-  register: function register(path, controller, action) {  
-    Router.routes[path] = {
+  routes: [],
+  register: function register(path, controller, action) {
+    path = stripSlashes(path);
+    Router.routes.push({
+      path: path,
       regexp: Router.routeToRegExp(path),
       controller: controller,
-      action: action || 'index'
-    };
+      action: action
+    });
+  },
+  callController: function(router, url) {
+    var params = getUrlParams(router, url);
+    console.log(params);
+    //TODO: call controller
   },
   listener: function(event) {
-    console.log('foo');
-    console.log(event);
-    var url = location.hash.slice(1) || '/';
-    console.log(url);
-    if(Router.routes[url) {
-      var args = Router.extractParameters(Router.routes[url], url);
-      //time to drink beer, continue tomorrow morning!
-    }
+    console.log('being called?');
+    var url = stripSlashes(location.hash.slice(1)) || '/';
+    //find the handler for this url
+    _.any(Router.routes, function(route) {
+      console.log('testing');
+     if(route.regexp.test(url)) {
+       console.log('passed test');
+       Router.callController(route, url);
+       return true;
+     }
+    //TODO: call 404 controller
+    });
   },
   routeToRegExp: function(route) {
     var optionalParam = /\((.*?)\)/g;
@@ -39,6 +84,8 @@ var Router = {
       });
     }
 };
+
+Router.register('/foo/bar/:id');
 
 // Listen on hash change:
 window.addEventListener('hashchange', Router.listener);  
