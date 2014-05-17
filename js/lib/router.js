@@ -14,7 +14,6 @@ var getUrlParams = function(router, url) {
   var tokensPath = path.split('/');
   data.router.controller = tokensPath[0];
   data.router.action = tokensPath[1];
-  console.log(tokensPath);
   for(var i = 2; i < tokensUrl.length; i++) {
     var argName = tokensPath[i].substr(1);
     data.controller[argName] = tokensUrl[i];
@@ -34,6 +33,7 @@ var stripSlashes = function(str) {
 
 var Router = {
   routes: [],
+  //TODO: use controller and action args to override default route interpretation
   register: function register(path, controller, action) {
     path = stripSlashes(path);
     Router.routes.push({
@@ -45,17 +45,17 @@ var Router = {
   },
   callController: function(router, url) {
     var params = getUrlParams(router, url);
-    console.log(params);
-    //TODO: call controller
+    if(controllers[params.router.controller]) {
+      controllers[params.router.controller].invoke(params.router.action, params.controller);
+    } else {
+      throw new Error('Controller ' + params.router.controller + ' is not defined');
+    }
   },
   listener: function(event) {
-    console.log('being called?');
     var url = stripSlashes(location.hash.slice(1)) || '/';
     //find the handler for this url
     _.any(Router.routes, function(route) {
-      console.log('testing');
      if(route.regexp.test(url)) {
-       console.log('passed test');
        Router.callController(route, url);
        return true;
      }

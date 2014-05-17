@@ -89,7 +89,6 @@ Model.prototype.post = function post(data, endpoint, cb) {
   this.data = data;
   this.url = this.getUrl(endpoint);
   this.sync(cb);
-  console.log(this.url);
 };
 
 Model.prototype.get = function get(id, otherArgs, endpoint, cb) {
@@ -112,7 +111,6 @@ Model.prototype.get = function get(id, otherArgs, endpoint, cb) {
   this.data = _.extend({id: id}, otherArgs);
   this.url = this.getUrl(endpoint);
   this.sync(cb);
-  console.log(this.url);
 };
 
 Model.prototype.put = function put(data, endpoint, cb) {
@@ -120,7 +118,6 @@ Model.prototype.put = function put(data, endpoint, cb) {
   this.data = data;
   this.url = this.getUrl(endpoint);
   this.sync(cb);
-  console.log(this.url);
 };
 
 Model.prototype.del = function del(id, otherArgs, endpoint, cb) {
@@ -144,7 +141,6 @@ Model.prototype.del = function del(id, otherArgs, endpoint, cb) {
   this.data = _.extend({id: id}, otherArgs);
   this.url = this.getUrl(endpoint);
   this.sync(cb);
-  console.log(this.url);
 };
 
 Model.prototype.replaceRestUrl = function replaceRestUrl(url) {
