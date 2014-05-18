@@ -3,10 +3,12 @@ var settings = {
   clientAuth: 'Basic ' + btoa('appFretista:password').toString('base64')
 };
 
+// helper function to find and replace all occurrences
 var replaceAll = function(find, replace, str) {
   return str.replace(new RegExp(find, 'g'), replace);
 };
 
+//helper function that returns an array with all arguments from a url eg /users/:foo/:bar gives ['foo', 'bar']
 var parseRestUrl = function(url) {
   var found = [];
   var regexp = /\:([^\/]+)(\/|$)/g;
@@ -23,6 +25,7 @@ var Model = function Model(name) {
   this.baseUrl = settings.baseUrl;
 };
 
+//get a token from our api
 Model.getToken = function getToken(email, password, cb) {
   cb = cb || function(){};
   $.ajax({
@@ -36,6 +39,7 @@ Model.getToken = function getToken(email, password, cb) {
     headers: {
       Authorization: settings.clientAuth
     }
+  //TODO: replace with complete
   }).done(function(response) {
     settings.accessToken = response.access_token;
     cb.call(this, undefined, response.access_token);
@@ -44,8 +48,10 @@ Model.getToken = function getToken(email, password, cb) {
   });
 };
 
+//get the url to do the api call
 Model.prototype.getUrl = function getUrl(endpoint) {
   var url = '';
+  //if a custom endpoint was set, use it instead the convention
   if(endpoint) {
     url += endpoint;
   } else {
@@ -59,6 +65,7 @@ Model.prototype.getUrl = function getUrl(endpoint) {
   return this.replaceRestUrl(url);
 };
 
+//all request methods use sync to do the request itself
 Model.prototype.sync = function sync(cb) {
   cb = cb || function(){};
   var requestData = {
@@ -151,6 +158,7 @@ Model.prototype.del = function del(id, otherArgs, endpoint, cb) {
   this.sync(cb);
 };
 
+//replace a url template with the args eg /users/:foo/:bar ---> /users/fooValue/barValue
 Model.prototype.replaceRestUrl = function replaceRestUrl(url) {
   var args = parseRestUrl(url);
   var self = this;

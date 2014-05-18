@@ -1,3 +1,4 @@
+//get the argument names of a function eg function(foo, bar) ---> ['foo', 'bar']
 var getParamNames = function(func) {
   var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
   var ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -8,12 +9,14 @@ var getParamNames = function(func) {
   return result;
 };
 
-var controllers = {};
+var controllers = {}; //we store all controllers here
+
 var Controller = function Controller(name, actions) {
   var self = this;
   self.name = name;
   self.actions = actions;
   controllers[name] = self;
+  //register the route for each action
   _.each(actions, function(action, actionName) {
     var params = getParamNames(action);
     var url = '/' + self.name;
@@ -27,25 +30,30 @@ var Controller = function Controller(name, actions) {
   });
 };
 
+//before and after can be overriden to run a routine before and/or after every action
 Controller.prototype.before = function before() {};
 Controller.prototype.after = function after() {};
 
+//this is the function that the router calls when a controller and action are matched
 Controller.prototype.invoke = function invoke(action, data) {
   this.viewUrl = '../views/' + this.name + '/' + action + '.html';
   this.data = data;
   this.before();
   if(this.actions[action]) {
+    //execute the action itself
     this.actions[action].call(this);
   } else {
     throw new Error('Action ' + action + ' is not defined in controller ' + this.name);
   }
 };
 
+//should be called by every action to render it
 Controller.prototype.done = function done() {
   this.after();
   this.render();
 };
 
+//does the rendering using handlebars
 Controller.prototype.render = function render($element) {
   $element = $element || $('body');
   self = this;
@@ -63,6 +71,7 @@ Controller.prototype.render = function render($element) {
   });
 };
 
+//renders a separate element
 Controller.prototype.renderElement = function renderElement(path, data, cb) {
   self = this;
   path = '../views/elements/' + path + '.html';

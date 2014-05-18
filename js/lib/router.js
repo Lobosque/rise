@@ -1,3 +1,6 @@
+/* this function extracts the arguments from the url based in the template
+ * that was matched to it
+**/
 var getUrlParams = function(router, url) {
   var data = {
     router: {},
@@ -28,7 +31,7 @@ var getUrlParams = function(router, url) {
   return data;
 };
 
-var stripSlashes = function(str) {
+var trimSlashes = function(str) {
   if(str.charAt(0) == '/') {
     str = str.substr(1);
   }
@@ -42,7 +45,7 @@ var Router = {
   routes: [],
   //TODO: use controller and action args to override default route interpretation
   register: function register(path, controller, action) {
-    path = stripSlashes(path);
+    path = trimSlashes(path);
     Router.routes.push({
       path: path,
       regexp: Router.routeToRegExp(path),
@@ -58,8 +61,9 @@ var Router = {
       throw new Error('Controller ' + params.router.controller + ' is not defined');
     }
   },
+  // The function called when a route change event is detected
   listener: function(event) {
-    var url = stripSlashes(location.hash.slice(1)) || '/';
+    var url = stripSlashes(location.hash.slice(1)) || '/'; //TODO: must be able to set a default controller and action for '/'
     //find the handler for this url
     _.any(Router.routes, function(route) {
      if(route.regexp.test(url)) {
@@ -70,6 +74,7 @@ var Router = {
     console.log('404: route doesn\'t exist');
     });
   },
+  // this function transform our route template into a regexp, so we can match it with the user inputed url
   routeToRegExp: function(route) {
     var optionalParam = /\((.*?)\)/g;
     var namedParam    = /(\(\?)?:\w+/g;
@@ -83,13 +88,6 @@ var Router = {
                  })
                  .replace(splatParam, '([^?]*?)');
     return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
-  },
-  extractParameters: function(route, fragment) {
-    var params = route.exec(fragment).slice(1);
-    return _.map(params, function(param, i) {
-      if (i === params.length - 1) return param || null;
-      return param ? decodeURIComponent(param) : null;
-    });
   }
 };
 
