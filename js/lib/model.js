@@ -75,12 +75,17 @@ Model.prototype.sync = function sync(cb) {
 
   var request = $.ajax(requestData);
 
-  request.done(function(response) {
-    cb.call(this, undefined, response);
-  });
-
-  request.fail(function(response) {
-    cb.call(this, new Error(response.responseJSON.message));
+  request.complete(function(jqXHR, status) {
+    var error = undefined;
+    var result = undefined;
+    if(status === 'success') {
+      result = jqXHR.responseJSON;
+    } else if(status === 'timeout') {
+      error = new Error(this.type + ' request at ' + this.url + ' timed out');
+    } else if (status === 'error') {
+      error = new Error(jqXHR.responseJSON.message);
+    }
+    cb.call(this, error, result);
   });
 };
 
@@ -141,7 +146,6 @@ Model.prototype.del = function del(id, otherArgs, endpoint, cb) {
     }
   }
 
-  return;
   this.data = _.extend({id: id}, otherArgs);
   this.url = this.getUrl(endpoint);
   this.sync(cb);
