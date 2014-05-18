@@ -2,8 +2,10 @@ var usersController = new Controller('users', {
   index: function() {
     self = this;
     Model.getToken('vitrina@freta.la', '123456', function(token) {
-      this.data.users = usersModel.get();
-      self.done();
+      usersModel.get(function(err, result) {
+        self.data.users = result;
+        self.done();
+      });
     });
   },
   create: function() {

@@ -7,6 +7,7 @@ var getParamNames = function(func) {
      result = [];
   return result;
 };
+
 var controllers = {};
 var Controller = function Controller(name, actions) {
   var self = this;
@@ -64,7 +65,7 @@ Controller.prototype.render = function render($element) {
 
 Controller.prototype.renderElement = function renderElement(path, data, cb) {
   self = this;
-  path = '../views/elements/' + path + '.html?'+new Date();
+  path = '../views/elements/' + path + '.html';
   $.get(path, function(response) {
     var template = Handlebars.compile(response);
     cb.call(this, template(data));

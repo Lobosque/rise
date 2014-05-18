@@ -94,7 +94,11 @@ Model.prototype.post = function post(data, endpoint, cb) {
 Model.prototype.get = function get(id, otherArgs, endpoint, cb) {
   this.type = 'GET';
   //otherArgs is optional, so we do some black magic here to rearrange args
-  if(_.isFunction(otherArgs)) {
+  if(_.isFunction(id)) {
+    cb = id;
+    id = undefined;
+    otherArgs = {};
+  } else if(_.isFunction(otherArgs)) {
     cb = otherArgs;
     otherArgs = {};
   } else if(_.isString(otherArgs)) {
