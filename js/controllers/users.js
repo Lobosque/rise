@@ -1,12 +1,8 @@
-var users = new Controller('users', {
+var usersController = new Controller('users', {
   index: function() {
     self = this;
-    var elementData = {
-      foo: 'bar'
-    };
-    self.renderElement('element', elementData, function(element) {
-      self.data.element = element;
-      console.log(self.data);
+    Model.getToken('vitrina@freta.la', '123456', function(token) {
+      this.data.users = usersModel.get();
       self.done();
     });
   },

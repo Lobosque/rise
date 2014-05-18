@@ -64,7 +64,7 @@ Controller.prototype.render = function render($element) {
 
 Controller.prototype.renderElement = function renderElement(path, data, cb) {
   self = this;
-  path = '../views/elements/' + path + '.html';
+  path = '../views/elements/' + path + '.html?'+new Date();
   $.get(path, function(response) {
     var template = Handlebars.compile(response);
     cb.call(this, template(data));

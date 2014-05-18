@@ -84,13 +84,13 @@ var Router = {
                  .replace(splatParam, '([^?]*?)');
     return new RegExp('^' + route + '(?:\\?([\\s\\S]*))?$');
   },
-    extractParameters: function(route, fragment) {
-      var params = route.exec(fragment).slice(1);
-      return _.map(params, function(param, i) {
-        if (i === params.length - 1) return param || null;
-        return param ? decodeURIComponent(param) : null;
-      });
-    }
+  extractParameters: function(route, fragment) {
+    var params = route.exec(fragment).slice(1);
+    return _.map(params, function(param, i) {
+      if (i === params.length - 1) return param || null;
+      return param ? decodeURIComponent(param) : null;
+    });
+  }
 };
 
 // Listen on hash change:
