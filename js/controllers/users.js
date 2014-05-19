@@ -1,4 +1,4 @@
-var usersController = new Controller('users', {
+var usersController = new rise.Controller('users', {
   index: function() {
     self = this;
     Model.getToken('vitrina@freta.la', '123456', function(token) {
