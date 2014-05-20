@@ -14,6 +14,15 @@
   console.log(Rise);
 
   Rise.helpers = {
+    UrlToArray: function(url) {
+      var request = {};
+      var pairs = url.substring(url.indexOf('?') + 1).split('&');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        request[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+      }
+      return request;
+    },
     //find and replace all occurrences in a string
     replaceAll: function(find, replace, str) {
       return str.replace(new RegExp(find, 'g'), replace);
@@ -31,7 +40,7 @@
     },
     //this function extracts the arguments from the url based in the template
     //that was matched to it
-    getUrlParams: function(router, url) {
+    getUrlData: function(router, url) {
       var data = {
         router: {},
         controller: {}
@@ -86,21 +95,30 @@
         action: action
       });
     },
-    callController: function(router, url) {
-      var params = Rise.helpers.getUrlParams(router, url);
-      if(controllers[params.router.controller]) {
-        controllers[params.router.controller].invoke(params.router.action, params.controller);
+    callController: function(router, url, params) {
+      var data = Rise.helpers.getUrlData(router, url);
+      _.extend(data.controller, params);
+      if(controllers[data.router.controller]) {
+        controllers[data.router.controller].invoke(data.router.action, data.controller);
       } else {
-        throw new Error('Controller ' + params.router.controller + ' is not defined');
+        throw new Error('Controller ' + data.router.controller + ' is not defined');
       }
     },
     // The function called when a route change event is detected
     listener: function(event) {
-      var url = Rise.helpers.trimSlashes(location.hash.slice(1)) || '/'; //TODO: must be able to set a default controller and action for '/'
+      var input = location.hash.slice(1);
+      var url, params;
+      //check if we have params (?foo=bar) and extract them;
+      if(input.indexOf('?') === -1) {
+        url = Rise.helpers.trimSlashes(input) || '/';//TODO: must be able to set a default controller and action for '/'
+      } else {
+        url = Rise.helpers.trimSlashes(input.split('?')[0]) || '/';//TODO: must be able to set a default controller and action for '/'
+        params = Rise.helpers.UrlToArray(input.split('?')[1]);
+      }
       //find the handler for this url
       _.any(Rise.Router.routes, function(route) {
        if(route.regexp.test(url)) {
-         Rise.Router.callController(route, url);
+         Rise.Router.callController(route, url, params);
          return true;
        }
       //TODO: call 404 controller
