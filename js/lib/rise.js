@@ -1,5 +1,15 @@
 (function() {
+  if(!window.jQuery) {
+    throw new Error('jQuery is not defined');
+  }
 
+  if(!window.Handlebars) {
+    throw new Error('Handlebars is not defined');
+  }
+
+  if(!window._) {
+    throw new Error('Lodash is not defined');
+  }
   var controllers = {}; //we store all controllers here
   var riseInstance;
 
@@ -377,6 +387,5 @@
 
   Rise.prototype.Model = Model;
   Rise.prototype.Controller = Controller;
-
 
 })();
