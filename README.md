@@ -1,8 +1,12 @@
-MVC
+Rise
 =========
 
 Overview
 ---
+To build the library:
+```
+gulp build
+```
 
 Model
 ---
