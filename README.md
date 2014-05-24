@@ -7,6 +7,10 @@ To build the library:
 ```
 gulp build
 ```
+###Dependencies
+* [jQuery]
+* [handlebars]
+* [lodash]
 
 Getting Started
 ---
@@ -178,6 +182,8 @@ TODO
 ---
 * 404
 
+[handlebars]:http://handlebarsjs.com/
+[jQuery]:http://jquery.com/
+[lodash]:http://lodash.com/
 [cakePHP]:http://cakephp.org/
 [ROPC]:http://tools.ietf.org/html/rfc6749#page-57
-[handlebars]:http://handlebarsjs.com/
