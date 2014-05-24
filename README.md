@@ -52,6 +52,57 @@ usersModel.get(24, {profileId: 67}, '/users/:id/profile/:profileId', cb); //GET 
 Controller
 ---
 
+O *controller* contém o código que será executado de acordo com a rota associada a ele. Cada *controller* possui uma ou mais *actions*.
+O construtor leva 2 argumentos: nome do *controller* e um objeto com as *actions*:
+```
+var usersController = new rise.Controller(controllerName, actions);
+```
+
+Por convenção, a primeira parte da rota representa o controller e a segunda parte representa a ação:
+```
+var actions = {
+  create: function() {
+    //a rota /#/users/create executa esta action
+    this.done();
+  }
+}
+```
+
+A única exceção é a *action* `index`, que necessita apenas da primeira parte para ser executada:
+```
+var actions = {
+  index: function() {
+    //a rota /#/users executa esta action
+    this.done();
+  }
+}
+```
+
+A terceira parte em diante representa argumentos da ação:
+```
+var actions = {
+  view: function(id) {
+    //a rota /#/users/create/45 executa esta action
+    console.log(id); //45
+    this.done();
+  }
+}
+```
+
+Além disso, é possivel passar *url params*:
+```
+var actions = {
+  index: function() {
+    //se chamado com /#/users?orderBy=name&desc=true
+    console.log(this.data); // {orderBy: 'name', desc: 'true'}
+    this.done();
+  }
+}
+```
+
+A função `this.done()`deve ser chamada para indicar que o controller foi executado, passando então
+para a  parte de renderização.
+
 View
 ---
 
