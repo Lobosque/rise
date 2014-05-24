@@ -10,13 +10,13 @@ gulp build
 
 Model
 ---
-O nosso model foi baseado no do [cakePHP].
-Cada modelo é um singleton:
+Our model was inspired by [cakePHP].
+Each model is a singleton:
 ```javascript
 usersModel = new rise.Model('users');
 ```
 
-O modelo foi feito para pegar os dados de uma API rest, e conta com os seguintes métodos:
+The model was conceived to interact with a RESTful API, and has the following methods:
 ```javascript
 usersModel.post(data, cb); //POST /users
 usersModel.get(cb); //GET /users
@@ -24,27 +24,27 @@ usersModel.put(id, data, cb); //PUT /users
 usersModel.del(id, cb); //DELETE /users
 ```
 
-O `cb` é uma função que será chamada quando a chamada a API for executada, ele recebe os argumentos `err` e `result`:
+`cb` is a function that will be called when the API call is finished, it has the arguments `err` and `result`:
 ```javascript
 var cb = function(err, result) {
- //err -> se a chamada retornar um erro, ele estará disponível aqui
- //result -> um objeto reprensentando o JSON enviado como resposta pela API
+ //err -> if the API call returns an error it will be here.
+ //result -> An object representing the JSON response from the API.
 });
 
 ``` 
 
-Para a função `get`, é possível também mandar um id para pegar um recurso específico:
+For the `get` function, it is also possible to send an id in order to get a specific resource:
 ```javascript
 usersModel.get(cb); //GET /users
 usersModel.get(45, cb); //GET /users/45
 ```
 
-Todas as funções podem também receber um argumento `endpoint`, para fazer override da convenção utilizada:
+All functions can receive a `enpoint` argument to override the convention:
 ```javascript
 usersModel.post(data, '/foo', cb); //POST /foo
 ```
 
-É possível também usar argumentos para sobreescrever o `endpoint`, por exemplo:
+It is also possible to use arguments to overriden endpoint:
 ```javascript
 usersModel.get(24, {profileId: 67}, '/users/:id/profile/:profileId', cb); //GET /users/24/profile/67
 ```
@@ -52,56 +52,67 @@ usersModel.get(24, {profileId: 67}, '/users/:id/profile/:profileId', cb); //GET 
 Controller
 ---
 
-O *controller* contém o código que será executado de acordo com a rota associada a ele. Cada *controller* possui uma ou mais *actions*.
-O construtor leva 2 argumentos: nome do *controller* e um objeto com as *actions*:
-```
+The controller contains the code that will be executed according to the route associated to it. Each controller has one or more actions:
+The constructor takes 2 arguments: 
+```javascript
+var controllerName = 'users';
+var actions = {
+  view: function() {
+    //...
+  },
+  update: function() {
+    //...
+  },
+  //...
+};
 var usersController = new rise.Controller(controllerName, actions);
 ```
 
-Por convenção, a primeira parte da rota representa o controller e a segunda parte representa a ação:
-```
+By convention, the first part of the route represents the controller, and the second part represents the action:
+```javascript
 var actions = {
   create: function() {
-    //a rota /#/users/create executa esta action
+    //a rota /#/users/create executes this action
     this.done();
   }
-}
+};
 ```
 
-A única exceção é a *action* `index`, que necessita apenas da primeira parte para ser executada:
-```
+The only exception is the action `index`, that only needs the first part of the route to be executed:
+```javascript
 var actions = {
   index: function() {
-    //a rota /#/users executa esta action
+    //a rota /#/users executes this action
     this.done();
   }
-}
+};
 ```
 
-A terceira parte em diante representa argumentos da ação:
-```
+The third part and onwards represents the arguments of the action:
+```javascript
 var actions = {
   view: function(id) {
-    //a rota /#/users/create/45 executa esta action
+    //a rota /#/users/create/45 executes this action
     console.log(id); //45
     this.done();
   }
-}
+};
 ```
 
-Além disso, é possivel passar *url params*:
-```
+It is also possible to pass url parameters:
+```javascript
 var actions = {
   index: function() {
     //se chamado com /#/users?orderBy=name&desc=true
     console.log(this.data); // {orderBy: 'name', desc: 'true'}
     this.done();
   }
-}
+};
 ```
 
-A função `this.done()`deve ser chamada para indicar que o controller foi executado, passando então
-para a  parte de renderização.
+All routes must be prefixed with `/#`.
+
+The function `this.done()` must be called to indicate that the controller was executed.
 
 View
 ---
