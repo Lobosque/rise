@@ -8,6 +8,16 @@ To build the library:
 gulp build
 ```
 
+Getting Started
+---
+Rise is a singleton, you instantiate it by passing in a settings object: 
+```
+var rise = new Rise({
+  baseUrl: 'http://0.0.0.0:8080',
+  clientAuth: 'Basic ' + btoa('appFretista:password').toString('base64')
+});
+```
+
 Model
 ---
 Our model was inspired by [cakePHP].
@@ -39,15 +49,26 @@ usersModel.get(cb); //GET /users
 usersModel.get(45, cb); //GET /users/45
 ```
 
-All functions can receive a `enpoint` argument to override the convention:
+All functions can receive an `endpoint` argument to override the convention:
 ```javascript
 usersModel.post(data, '/foo', cb); //POST /foo
 ```
 
-It is also possible to use arguments to overriden endpoint:
+It is also possible to use arguments in the overriden endpoint:
 ```javascript
 usersModel.get(24, {profileId: 67}, '/users/:id/profile/:profileId', cb); //GET /users/24/profile/67
 ```
+
+###Authorization
+
+The model assumes that the API uses the [ROPC] OAuth2 flow, the token is set globally using the `getToken` function:
+```javascript
+Model.getToken(username, password, cb);
+```
+
+Once the token is set, all API call will use it in the Authorization header
+
+
 
 Controller
 ---
@@ -124,3 +145,4 @@ TODO
 * 404
 
 [cakePHP]:http://cakephp.org/
+[ROPC]:http://tools.ietf.org/html/rfc6749#page-57
