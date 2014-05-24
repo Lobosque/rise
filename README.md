@@ -176,7 +176,6 @@ userListView.renderAsElement(data, function(res) {
 
 TODO
 ---
-* Data binding
 * 404
 
 [cakePHP]:http://cakephp.org/
