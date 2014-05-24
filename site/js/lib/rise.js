@@ -54,63 +54,16 @@
     });
   };
 
-  //before and after can be overriden to run a routine before and/or after every action
-  Controller.prototype.before = function before() {};
-  Controller.prototype.after = function after() {};
-
   //this is the function that the router calls when a controller and action are matched
   Controller.prototype.invoke = function invoke(action, data) {
     this.viewUrl = '../views/' + this.name + '/' + action + '.html';
     this.data = data;
-    this.before();
     if(this.actions[action]) {
       //execute the action itself
       this.actions[action].call(this);
     } else {
       throw new Error('Action ' + action + ' is not defined in controller ' + this.name);
     }
-  };
-
-  //should be called by every action to render it
-  Controller.prototype.done = function done() {
-    this.after();
-    this.render();
-  };
-
-  //does the rendering using handlebars
-  Controller.prototype.render = function render($element) {
-    $element = $element || $('body');
-    self = this;
-    $.get(self.viewUrl, function(response) {
-      var template = Handlebars.compile(response);
-      $element.html(template(self.data));
-    })
-    .fail(function(response) {
-      if(response.status == 404) {
-        console.log(response);
-        throw new Error('View file ' + self.viewUrl + ' wasn\'t found');
-      } else {
-        throw new Error('Error ' + response.status + ' while trying to load view');
-      }
-    });
-  };
-
-  //renders a separate element
-  Controller.prototype.renderElement = function renderElement(path, data, cb) {
-    self = this;
-    path = '../views/elements/' + path + '.html';
-    $.get(path, function(response) {
-      var template = Handlebars.compile(response);
-      cb.call(this, template(data));
-    })
-    .fail(function(response) {
-      if(response.status == 404) {
-        console.log(response);
-        throw new Error('Element file ' + path + ' wasn\'t found');
-      } else {
-        throw new Error('Error ' + response.status + ' while trying to load view');
-      }
-    });
   };
 
   Rise.prototype.Controller = Controller;
@@ -573,106 +526,67 @@
 
 })();
 
-/**
- * I really like the way Backbone handles Events and Views, it's clean and nice.
- * I was working on it by myself but i think we could copy-paste most of those 
- * parts (Events & Views) but making them smarter with some conventions.
- * Or even, if that's the case, make it work with react.
- * - Dalai
- */
 (function() {
-  var viewSettings = {
-    type: 'html', 
-    basePath: '../views',
-    extension : 'html',
-  }
 
-  var View = function View(name,params) {
-    /**
-     * View name, will be used to load html
-     * @type string
-     */
-    this.name = name;
-
-    /**
-     * View type, possibly:
-     *  - file
-     *  - html
-     * @type @exp;viewSettings@pro;type
-     */
-    this.type = viewSettings.type;
-
-    /**
-     * Views path, when the type is 'file'
-     * @type String
-     */
-    this.basePath = viewSettings.basePath;
-
-    /**
-     * View file extension when type is 'file'
-     * @type @exp;viewSettings@pro;extension
-     */
-    this.extension = viewSettings.extension;
-
-    /**
-     * View params
-     * @type Object
-     */
-    this.params = params;
-
-    /**
-     * Events, in format:
-     * {
-     *  'event jquerySelector': callback(event)
-     * }
-     * jquerySelector
-     * @type Array
-     */
-    this.events = {};
-
-    /**
-     * Events in the format:
-     * {
-     *  eventName: callback(event)
-     * }
-     * @type Array
-     */
-    this.eventListeners = {};
-
-    this.$e = null;
-
-    this.tagName;
-
+  var getEventAndElement = function(str) {
+    var split = str.split(' ');
+    var evt = split.shift();
+    var element = split.join(' ');
+    return {
+      event:  evt,
+      element: element
+    };
   };
 
-  /**
-   * jQuery object 
-   * @param String selector
-   * @returns jQuery
-   */
-  View.prototype.$ = function(selector){
-    return this.$e.find(selector);
+  var View = function View(path, events) {
+    this.url = 'views/' + path + '.html';
+    this.events = events;
+  };
+
+  View.settings = {
+    renderTo: 'body'
+  };
+
+  View.prototype.render = function(data) {
+    $element = $(View.settings.renderTo);
+    self = this;
+    $.get(self.url, function(response) {
+      var template = Handlebars.compile(response);
+      $element.html(template(data));
+      self.registerEvents();
+    })
+    .fail(function(response) {
+      if(response.status == 404) {
+        throw new Error('View file ' + self.url + ' wasn\'t found');
+      } else {
+        throw new Error('Error ' + response.status + ' while trying to load view');
+      }
+    });
   }
 
-  View.prototype.render = function(cb)
-  {
-    // i think it should create a new element and output it;
-    // if an element was already created and added to the document,
-    // i think it should only update its internal content.
-    // cb a function to call after rendering.
-    //
+  View.prototype.renderAsElement = function(data, cb) {
+    self = this;
+    $.get(self.url, function(response) {
+      var template = Handlebars.compile(response);
+      self.registerEvents();
+      cb.call(this, response);
+    })
+    .fail(function(response) {
+      if(response.status == 404) {
+        throw new Error('View file ' + self.url + ' wasn\'t found');
+      } else {
+        throw new Error('Error ' + response.status + ' while trying to load view');
+      }
+    });
+  };
+
+  View.prototype.registerEvents = function() {
+    _.each(this.events, function(fn, key) {
+      var params = getEventAndElement(key);
+      $(View.settings.renderTo).on(params.event, params.element, fn);
+    });
   }
 
-  /**
-   * Returns a string containing a template to be rendered later
-   * @returns pre compilation template function
-   */
-  View.prototype.template = function(){
-    if(_.isObject(this.name)){
-      return _.template(this.name.html());
-    } else if(_.isString(this.name))
-    {
-      return _.template(this.name);
-    }
-  }
+  Rise.View = View;
+
 })();

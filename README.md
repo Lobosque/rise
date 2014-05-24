@@ -93,8 +93,7 @@ By convention, the first part of the route represents the controller, and the se
 ```javascript
 var actions = {
   create: function() {
-    //a rota /#/users/create executes this action
-    this.done();
+    //the route /#/users/create executes this action
   }
 };
 ```
@@ -104,7 +103,6 @@ The only exception is the action `index`, that only needs the first part of the 
 var actions = {
   index: function() {
     //a rota /#/users executes this action
-    this.done();
   }
 };
 ```
@@ -115,7 +113,6 @@ var actions = {
   view: function(id) {
     //a rota /#/users/create/45 executes this action
     console.log(id); //45
-    this.done();
   }
 };
 ```
@@ -126,23 +123,62 @@ var actions = {
   index: function() {
     //se chamado com /#/users?orderBy=name&desc=true
     console.log(this.data); // {orderBy: 'name', desc: 'true'}
-    this.done();
   }
 };
 ```
 
 All routes must be prefixed with `/#`.
+The flow of an action usually ends by rendering a view.
 
-The function `this.done()` must be called to indicate that the controller was executed.
 
 View
 ---
+View are represented by a template (html file using [handlebars]) and a corresponding javascript function that will call it.
+
+Example of a template:
+```html
+<p>Hello {{name}}!</p>
+```
+By convention, the templates are stored in views folder.
+
+To create a new view:
+```javascript
+var path = 'users/list.html';
+var events = {
+  'click #foo': function(e) {
+    e.preventDefault();
+    alert('bar');
+  }
+};
+userListView = new rise.View(path, events);
+```
+`events` is a object where the key represents the event to watch for and the element, and the value is the function that will be called when the event is triggered.
+
+To render the view (usually inside a controller action):
+```javascript
+userListView.render(data);
+```
+
+By convention, the view will render directly into the body.
+
+to change where the view is rendered:
+```javascript
+Rise.settings.renderTo = '#id';
+```
+
+Instead rendering the template straight into the document, you can get the result in a variable using `renderAsElement`:
+```
+var element;
+userListView.renderAsElement(data, function(res) {
+  element = res;
+});
+```
 
 TODO
 ---
-* Handle Events
 * Data binding
 * 404
 
 [cakePHP]:http://cakephp.org/
 [ROPC]:http://tools.ietf.org/html/rfc6749#page-57
+[handlebars]:http://handlebarsjs.com/
