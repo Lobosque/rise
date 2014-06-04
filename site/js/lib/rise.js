@@ -268,7 +268,7 @@
     cb = cb || function(){};
     $.ajax({
       type: 'POST',
-      url: Rise.riseInstance.settings.baseUrl+'/token',
+      url: Rise.riseInstance.settings.baseUrl+'/authenticate',
       data: {
         grant_type: 'password',
         username: email,
