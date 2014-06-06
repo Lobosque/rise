@@ -276,6 +276,10 @@
     Rise.riseInstance.settings.password = p;
   };
 
+  Model.hasAuth = function hasAuth() {
+    return !!Rise.riseInstance.settings.login && !!Rise.riseInstance.settings.password;
+  };
+
   //get a token from our api
   Model.getToken = function getToken(cb) {
     cb = cb || function(){};
