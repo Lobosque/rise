@@ -560,7 +560,7 @@
   View.prototype.render = function(data) {
     $element = $(View.settings.renderTo);
     self = this;
-    $.get(self.url, function(response) {
+    $.get(self.url + '?_=' + Date.now(), function(response) {
       var template = Handlebars.compile(response);
       $element.html(template(data));
       self.registerEvents();
@@ -576,7 +576,7 @@
 
   View.prototype.renderAsElement = function(data, cb) {
     self = this;
-    $.get(self.url, function(response) {
+    $.get(self.url + '?_=' + Date.now(), function(response) {
       var template = Handlebars.compile(response);
       self.registerEvents();
       cb.call(this, response);
