@@ -1,7 +1,7 @@
 var usersController = new rise.Controller('users', {
   index: function() {
     self = this;
-    Model.getToken('vitrina@freta.la', '123456', function(token) {
+    Model.getToken('sms@freta.la', '123456', function(token) {
       usersModel.get(function(err, result) {
         self.data.users = result;
         listUserView.render(self.data);
@@ -10,7 +10,9 @@ var usersController = new rise.Controller('users', {
   },
   create: function() {
   },
-  view: function(id) {
+  view: function(id, other) {
+    console.log(id);
+    console.log(other);
   },
   update: function(id) {
   },

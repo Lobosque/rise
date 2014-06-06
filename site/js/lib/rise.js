@@ -35,6 +35,14 @@
     return result;
   };
 
+  var extractArgs = function(fn, data) {
+    var args = [];
+    _.each(getParamNames(fn), function(val) {
+      args.push(data[val]);
+    });
+    return args;
+  };
+
   Controller = function Controller(name, actions) {
     var self = this;
     self.name = name;
@@ -57,10 +65,10 @@
   //this is the function that the router calls when a controller and action are matched
   Controller.prototype.invoke = function invoke(action, data) {
     this.viewUrl = '../views/' + this.name + '/' + action + '.html';
-    this.data = data;
+    var args = extractArgs(this.actions[action], data);
     if(this.actions[action]) {
       //execute the action itself
-      this.actions[action].call(this);
+      this.actions[action].apply(this, args);
     } else {
       throw new Error('Action ' + action + ' is not defined in controller ' + this.name);
     }
