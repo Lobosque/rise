@@ -1,11 +1,10 @@
+rise.Model.setAuth('sms@freta.la', '123456');
 var usersController = new rise.Controller('users', {
   index: function() {
     self = this;
-    Model.getToken('sms@freta.la', '123456', function(token) {
-      usersModel.get(function(err, result) {
-        self.data.users = result;
-        listUserView.render(self.data);
-      });
+    usersModel.get(function(err, result) {
+      self.data.users = result;
+      listUserView.render(self.data);
     });
   },
   create: function() {
