@@ -65,9 +65,14 @@ usersModel.get(24, {profileId: 67}, '/users/:id/profile/:profileId', cb); //GET 
 
 ###Authorization
 
-The model assumes that the API uses the [ROPC] OAuth2 flow, the token is set globally using the `getToken` function:
+For now the authorization flow is very strict, assuming a [ROPC] Auth2 flow with single use tokens.  
+The user/pass is set as follows:
 ```javascript
-Model.getToken(username, password, cb);
+rise.Model.setAuth(email, password);
+```
+You can check if a user/pass has been set:
+```javascript
+rise.Model.hasAuth(); //true or false
 ```
 
 Once the token is set, all API call will use it in the Authorization header
