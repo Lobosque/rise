@@ -12,7 +12,7 @@
   }
 
   window.Rise = function(settings) {
-    this.settings = settings;
+    this.settings = settings || {};
     // Listen on hash change:
     window.addEventListener('hashchange', Rise.Router.listener);
     // Listen on page load:
@@ -589,18 +589,18 @@
     this.url = 'views/' + path + '.html';
     this.template = 'views/templates/' + template + '.html';
     this.events = events;
+    this.onLoad = function(){};
   };
 
   View.prototype.render = function(data) {
     self = this;
     //first, we render the template
     render($('body'), self.template, data, function() {
-      console.log(self);
       //now, we render the view
       render($('#rise-render-here'), self.url, data, function() {
         //now we register the events
-        console.log(self);
         self.registerEvents();
+        self.onLoad.call(self);
       });
     });
   };
