@@ -38,11 +38,12 @@ usersModel.put(id, data, cb); //PUT /users
 usersModel.del(id, cb); //DELETE /users
 ```
 
-`cb` is a function that will be called when the API call is finished, it has the arguments `err` and `result`:
+`cb` is a function that will be called when the API call is finished, it has the arguments `err` and `result` and `headers`:
 ```javascript
-var cb = function(err, result) {
+var cb = function(err, result, headers) {
  //err -> if the API call returns an error it will be here.
  //result -> An object representing the JSON response from the API.
+ //headers -> headers returned by the API, already parsed and ready to use. (for now, the only header available is 'links')
 });
 
 ``` 
