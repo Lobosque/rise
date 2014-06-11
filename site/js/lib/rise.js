@@ -441,9 +441,13 @@
     this.sync(cb);
   };
 
-  Model.prototype.put = function put(data, endpoint, cb) {
+  Model.prototype.put = function put(id, data, endpoint, cb) {
     this.type = 'PUT';
     this.data = data;
+    if(_.isFunction(endpoint)) {
+      cb = endpoint;
+      endpoint = undefined;
+    }
     this.url = this.getUrl(endpoint);
     this.sync(cb);
   };
