@@ -3,3 +3,6 @@ var listUserView = new Rise.View('users/index', {
     alert('foo');
   }
 });
+
+var pages404View = new Rise.View('pages/404', {
+});

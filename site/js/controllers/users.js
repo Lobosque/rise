@@ -28,3 +28,9 @@ var usersController = new rise.Controller('users', {
   remove: function(id) {
   },
 });
+
+var pagesController = new rise.Controller('pages', {
+  404: function() {
+    pages404View.render(self.data);
+  }
+});
