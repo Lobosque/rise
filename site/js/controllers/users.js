@@ -2,8 +2,13 @@ rise.Model.setAuth('sms@freta.la', '123456');
 var usersController = new rise.Controller('users', {
   index: function() {
     self = this;
-    usersModel.get(function(err, result) {
+    var args = {
+      pageSize: self.data.pageSize || '2',
+      page: self.data.page || '1',
+    };
+    usersModel.get(args, function(err, result, headers) {
       self.data.users = result;
+      self.data.pagination = headers.link;
       listUserView.render(self.data);
     });
   },
