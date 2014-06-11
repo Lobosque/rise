@@ -1,4 +1,9 @@
 rise.Model.setAuth('sms@freta.la', '123456');
+rise.Router.override({
+  '/': '/users',
+  '/teste': '/users',
+  '/foo'  : '/users/view',
+});
 var usersController = new rise.Controller('users', {
   index: function() {
     self = this;

@@ -19,6 +19,7 @@
     window.addEventListener('load', Rise.Router.listener);
     Rise.riseInstance = this;
     this.controllers = {};
+    this.Router = Rise.Router;
   };
 
 })();
@@ -538,8 +539,24 @@
     return request;
   };
 
+  var overrides = {};
+
   Rise.Router = {
     routes: [],
+    override: function(routes) {
+      _.each(routes, function(val, key) {
+        var trimmedKey = trimSlashes(key);
+        if(trimmedKey === '') {
+          trimmedKey = '/';
+        }
+        var trimmedVal = trimSlashes(val);
+        if(trimmedKey != key) {
+          delete routes[key];
+        }
+        routes[trimmedKey] = trimmedVal;
+      });
+      overrides = routes;
+    },
     //TODO: use controller and action args to override default route interpretation
     register: function register(path, controller, action) {
       path = trimSlashes(path);
@@ -565,11 +582,12 @@
       var url, params;
       //check if we have params (?foo=bar) and extract them;
       if(input.indexOf('?') === -1) {
-        url = trimSlashes(input) || '/';//TODO: must be able to set a default controller and action for '/'
+        url = trimSlashes(input) || '/';
       } else {
-        url = trimSlashes(input.split('?')[0]) || '/';//TODO: must be able to set a default controller and action for '/'
+        url = trimSlashes(input.split('?')[0]) || '/';
         params = urlToArray(input.split('?')[1]);
       }
+      url = overrides[url] || url;
       //find the handler for this url
       var exists = _.any(Rise.Router.routes, function(route) {
        if(route.regexp.test(url)) {
