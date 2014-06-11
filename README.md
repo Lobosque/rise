@@ -140,6 +140,14 @@ var actions = {
 All routes must be prefixed with `/#`.
 The flow of an action usually ends by rendering a view.
 
+Router
+---
+You can add aliases and override routes defined by the convetion using:
+```
+rise.Router.override({
+  '/newroute' : '/controller/action'
+});
+```
 
 View
 ---
