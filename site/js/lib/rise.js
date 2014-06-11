@@ -443,7 +443,7 @@
 
   Model.prototype.put = function put(id, data, endpoint, cb) {
     this.type = 'PUT';
-    this.data = data;
+    this.data = _.extend({id: id}, data);
     if(_.isFunction(endpoint)) {
       cb = endpoint;
       endpoint = undefined;
