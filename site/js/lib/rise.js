@@ -671,6 +671,8 @@
     this.onLoad = function(){};
   };
 
+  View.eventList = [];
+
   View.prototype.render = function(data) {
     self = this;
     //first, we render the template
@@ -678,6 +680,7 @@
       //now, we render the view
       render($('#rise-render-here'), self.url, data, function() {
         //now we register the events
+        self.unregisterEvents();
         self.registerEvents();
         self.onLoad.call(self);
       });
@@ -700,12 +703,20 @@
     });
   };
 
+  View.prototype.unregisterEvents = function() {
+    while(View.eventList.length !== 0) {
+      var e = View.eventList.pop();
+      $('body').off(e.evt, e.el, e.fn);
+    }
+  };
+
   View.prototype.registerEvents = function() {
     _.each(this.events, function(fn, key) {
       var params = getEventAndElement(key);
       $('body').on(params.event, params.element, fn);
+      View.eventList.push({evt: params.event, el: params.element, fn: fn});
     });
-  }
+  };
 
   Rise.View = View;
 
