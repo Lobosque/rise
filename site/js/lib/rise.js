@@ -370,7 +370,7 @@
       var requestData = {
         url: self.url,
         type: self.type,
-        data: self.data,
+        data: JSON.stringify(self.data),
         contentType: 'application/json',
       };
       if(Rise.riseInstance.settings.accessToken) {
@@ -406,6 +406,14 @@
 
   Model.prototype.post = function post(data, endpoint, cb) {
     this.type = 'POST';
+    if(_.isFunction(data)) {
+      cb = data;
+      data = undefined;
+      endpoint = undefined;
+    } else if(_.isFunction(endpoint)) {
+      cb = endpoint;
+      endpoint = undefined;
+    }
     this.data = data;
     this.url = this.getUrl(endpoint);
     this.sync(cb);
@@ -443,11 +451,15 @@
 
   Model.prototype.put = function put(id, data, endpoint, cb) {
     this.type = 'PUT';
-    this.data = _.extend({id: id}, data);
-    if(_.isFunction(endpoint)) {
+    if(_.isFunction(data)) {
+      cb = data;
+      data = undefined;
+      endpoint = undefined;
+    } else if(_.isFunction(endpoint)) {
       cb = endpoint;
       endpoint = undefined;
     }
+    this.data = _.extend({id: id}, data);
     this.url = this.getUrl(endpoint);
     this.sync(cb);
   };
