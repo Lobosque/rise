@@ -272,14 +272,25 @@
       hasAuth: function hasAuth() {
         return !!Rise.riseInstance.settings.login && !!Rise.riseInstance.settings.password;
       },
-      login: function(email, password, remember) {
+      login: function(email, password, remember, cb) {
         if(remember) {
           localStorage.setItem('email', email);
           localStorage.setItem('password', password);
         }
         Rise.Helpers.Auth.setAuth(email, password);
-        window.location = '/#/users/';
+        Rise.riseInstance.Model.getToken(function(err, response) {
+          if(err) {
+            cb.call(this, err);
+          } else {
+            cb.call(this);
+          }
+        });
       },
+      logout: function(url) {
+        Rise.riseInstance.Helpers.Auth.removeLocalStorageAuth();
+        Rise.riseInstance.Helpers.Auth.setAuth(undefined, undefined);
+        window.location = url;
+      }
     }
   };
 })();
@@ -366,7 +377,10 @@
       Rise.riseInstance.settings.accessToken = response.access_token;
       cb.call(this, undefined, response.access_token);
     }).fail(function(response) {
-      cb.call(this, new Error(response.responseJSON.error_description));
+      var err = new Error(response.responseJSON.error_description);
+      err.status = response.status;
+      cb.call(this, err);
+
     });
   };
 
