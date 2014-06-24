@@ -289,7 +289,7 @@
       logout: function(url) {
         Rise.riseInstance.Helpers.Auth.removeLocalStorageAuth();
         Rise.riseInstance.Helpers.Auth.setAuth(undefined, undefined);
-        window.location = url;
+        Router.go(url);
       }
     }
   };
@@ -605,7 +605,14 @@
   Rise.Router = {
     routes: [],
     go: function(url) {
+      window.removeEventListener('hashchange', Rise.Router.listener, false);
+      if(url.charAt(0) == '/') {
+        window.location = '#' + url;
+      } else {
+        window.location = '#/' + url;
+      }
       Rise.Router.listener(undefined, url);
+      window.addEventListener('hashchange', Rise.Router.listener);
     },
     override: function(routes) {
       _.each(routes, function(val, key) {
