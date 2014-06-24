@@ -151,6 +151,11 @@ rise.Router.override({
 
 When a route is not found, the action `404` of the controller `pages` will be called.
 
+To manually go to a new page/route:
+```
+rise.Router.go('/path/to/new/action');
+```
+
 View
 ---
 View are represented by a template (html file using [handlebars]) and a corresponding javascript function that will call it.
