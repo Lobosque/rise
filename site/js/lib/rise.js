@@ -604,6 +604,9 @@
 
   Rise.Router = {
     routes: [],
+    go: function(url) {
+      Rise.Router.listener(undefined, url);
+    },
     override: function(routes) {
       _.each(routes, function(val, key) {
         var trimmedKey = trimSlashes(key);
@@ -638,8 +641,8 @@
       }
     },
     // The function called when a route change event is detected
-    listener: function(event) {
-      var input = location.hash.slice(1);
+    listener: function(event, url) {
+      var input = url || location.hash.slice(1);
       var url, params;
       //check if we have params (?foo=bar) and extract them;
       if(input.indexOf('?') === -1) {

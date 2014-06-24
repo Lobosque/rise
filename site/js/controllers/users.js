@@ -1,4 +1,4 @@
-rise.Model.setAuth('sms@freta.la', '123456');
+rise.Helpers.Auth.setAuth('sms@freta.la', '123456');
 rise.Router.override({
   '/': '/users',
   '/teste': '/users',
