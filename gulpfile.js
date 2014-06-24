@@ -20,14 +20,20 @@ gulp.task('copyToAdmin', function() {
   .pipe(gulp.dest('../admin/site/js/vendor'));
 });
 
+gulp.task('copyToEcommerce', function() {
+  return gulp.src('./site/js/lib/rise.js')
+  .pipe(concat('rise.js'))
+  .pipe(gulp.dest('../ecommerce/site/js/vendor'));
+});
+
 // Rerun the task when a file changes
 gulp.task('watch', function() {
   gulp.watch(buildPaths, ['build']);
 });
 
 gulp.task('watchCp', function() {
-  gulp.watch(buildPaths, ['build', 'copyToAdmin']);
+  gulp.watch(buildPaths, ['build', 'copyToAdmin', 'copyToEcommerce']);
 });
 
 gulp.task('default', ['build', 'watch']);
-gulp.task('cp', ['build', 'copyToAdmin', 'watchCp']);
+gulp.task('cp', ['build', 'copyToAdmin', 'copyToEcommerce', 'watchCp']);
