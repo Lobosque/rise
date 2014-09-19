@@ -289,7 +289,7 @@
       logout: function(url) {
         Rise.riseInstance.Helpers.Auth.removeLocalStorageAuth();
         Rise.riseInstance.Helpers.Auth.setAuth(undefined, undefined);
-        Router.go(url);
+        Rise.Router.go(url);
       }
     }
   };
